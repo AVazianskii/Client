@@ -36,13 +36,25 @@ namespace _2
             set 
             { 
                 input_text = value; 
-                OnPropertyChanged("Input_text"); 
-                if (input_text.Length > 0)
+                OnPropertyChanged("Input_text");
+                OnPropertyChanged("BytesLeft");
+
+                // Проверяем возможность отправки сообщения
+                sendEnabled = true;
+
+                if (input_text.Length == 0)
                 {
-                    sendEnabled = true;
+                    sendEnabled = false;
                 }
-                else { sendEnabled = false; }
+                if (Convert.ToInt16(BytesLeft) < 0)
+                {
+                    sendEnabled = false;
+                }
             }
+        }
+        public string BytesLeft
+        {
+            get { return Convert.ToString(256 - Encoding.UTF8.GetByteCount(input_text)); }
         }
 
 
@@ -56,6 +68,7 @@ namespace _2
 
         public MessangerViewModel()
         {
+            input_text = "";
             Send = new Command(o => _Send(), o => sendEnabled);
             Clear = new Command(o => _Clear());
             
